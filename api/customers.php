@@ -46,7 +46,6 @@ try {
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    echo "✅ Connected successfully!"; // 👈 add this
 
 } catch (PDOException $e) {
     die("❌ Connection failed: " . $e->getMessage());
@@ -55,18 +54,9 @@ try {
 
 //rETRIEVE rECORDS
 
-$customers = [
-    ['id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com', 'created_at' => '2024-01-15'],
-    ['id' => 2, 'name' => 'Jane Smith', 'email' => 'jane@example.com', 'created_at' => '2024-01-20'],
-    ['id' => 3, 'name' => 'Alice Johnson', 'email' => 'alice@example.com', 'created_at' => '2024-02-03'],
-    ['id' => 4, 'name' => 'Bob Brown', 'email' => 'bob@example.com', 'created_at' => '2024-02-18'],
-    ['id' => 5, 'name' => 'Charlie Wilson', 'email' => 'charlie@example.com', 'created_at' => '2024-03-01'],
-    ['id' => 6, 'name' => 'Diana Prince', 'email' => 'diana@example.com', 'created_at' => '2024-03-10'],
-    ['id' => 7, 'name' => 'Ethan Hunt', 'email' => 'ethan@example.com', 'created_at' => '2024-03-22'],
-    ['id' => 8, 'name' => 'Fiona Gallagher', 'email' => 'fiona@example.com', 'created_at' => '2024-04-05'],
-    ['id' => 9, 'name' => 'George Costanza', 'email' => 'george@example.com', 'created_at' => '2024-04-18'],
-    ['id' => 10, 'name' => 'Hannah Baker', 'email' => 'hannah@example.com', 'created_at' => '2024-05-01'],
-];
+  $statement = $pdo->prepare('SELECT * FROM customers ORDER BY id');
+    $statement->execute();
+    $customers = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
