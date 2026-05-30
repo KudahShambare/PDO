@@ -11,5 +11,7 @@
             "email": "70160442+KudahShambare@users.noreply.github.com"
         }
     ],
-    "require": {}
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
 }

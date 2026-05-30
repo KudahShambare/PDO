@@ -19,6 +19,22 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
+
+       #run owasp tess
+      - name: Check Composer dependencies for vulnerabilities
+        run: composer audit --format=table --no-interaction 
+
+      - name: Run Semgrep SAST scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+         config: p/owasp-top-ten
+
+      - name: OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+         target: 'https://your-test-url.com'
+         fail_action: true  
+
       #  Running unit tests
       - name: Run PHPUnit tests
         run: ./vendor/bin/phpunit
