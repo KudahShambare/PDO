@@ -1,0 +1,15 @@
+{
+    "name": "kuda/pdo",
+    "autoload": {
+        "psr-4": {
+            "Kuda\\Pdo\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Kudakwashe Shambare",
+            "email": "70160442+KudahShambare@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
