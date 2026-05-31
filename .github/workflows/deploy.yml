@@ -64,7 +64,7 @@ jobs:
 
       # 3. Run your schema script to build the tables and seed data
       - name: Setup Test Database
-        run: php config.php 
+        run: php api/config.php 
 
       # Unit tests
       - name: Run PHPUnit tests
