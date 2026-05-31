@@ -2,11 +2,14 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -14,27 +17,36 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4.21' # My PHP version
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
-
-       #run owasp tess
+      # Security checks
       - name: Check Composer dependencies for vulnerabilities
-        run: composer audit --format=table --no-interaction 
+        run: composer audit --format=table --no-interaction
 
       - name: Run Semgrep SAST scan
         uses: returntocorp/semgrep-action@v1
         with:
-         config: p/owasp-top-ten
+          config: p/owasp-top-ten
 
       - name: OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-         target: 'https://your-test-url.com'
-         fail_action: true  
+          target: 'https://your-test-url.com'
+          fail_action: true
 
-      #  Running unit tests
+      # Environment setup
+      - name: Create .env file
+        run: |
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
+
+      # Unit tests
       - name: Run PHPUnit tests
-        run: ./vendor/bin/phpunit
+        run: ./vendor/bin/phpunit tests/CustomerTest.php
