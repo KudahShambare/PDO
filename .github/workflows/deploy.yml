@@ -10,6 +10,21 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # 1. Start a temporary MySQL database specifically for this job
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,17 +50,21 @@ jobs:
       - name: OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: 'https://your-test-url.com'
+          target: 'https://your-test-url.com' # Reminder: update this to a real URL if keeping ZAP
           fail_action: true
 
-      # Environment setup
-      - name: Create .env file
+      # 2. Point the testing environment to the temporary MySQL container
+      - name: Create .env file for testing
         run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_NAME=test_db" >> .env
+          echo "DB_USER=root" >> .env
+          echo "DB_PASS=root" >> .env
+
+      # 3. Run your schema script to build the tables and seed data
+      - name: Setup Test Database
+        run: php path/to/your/schema.php # <-- IMPORTANT: Update this path to where your schema file actually lives!
 
       # Unit tests
       - name: Run PHPUnit tests
