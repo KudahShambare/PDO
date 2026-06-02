@@ -50,7 +50,7 @@ jobs:
       - name: OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: '' 
+          target: 'https://pdo-ivory.vercel.app/' 
           fail_action: true
 
       # 2. Point the testing environment to the temporary MySQL container
