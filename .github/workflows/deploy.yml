@@ -10,7 +10,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # 1. Start a temporary MySQL database specifically for this job
+    # 1. Start a temporary MySQL database 
     services:
       mysql:
         image: mysql:8.0
@@ -50,7 +50,7 @@ jobs:
       - name: OWASP ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: 'https://your-test-url.com' # Reminder: update this to a real URL if keeping ZAP
+          target: '' 
           fail_action: true
 
       # 2. Point the testing environment to the temporary MySQL container
@@ -62,7 +62,7 @@ jobs:
           echo "DB_USER=root" >> .env
           echo "DB_PASS=root" >> .env
 
-      # 3. Run your schema script to build the tables and seed data
+      # 3. Run  schema script to build the tables and seed data
       - name: Setup Test Database
         run: php api/config.php 
 
