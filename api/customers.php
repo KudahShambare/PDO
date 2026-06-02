@@ -1,42 +1,27 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Records</title>
-   <link rel="stylesheet" href="./styles.css">
-
-
-
+    <link rel="stylesheet" href="/api/styles.css">
 </head>
 
 <?php
 
-// cONNECT tO db
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
-// After $dotenv->load()
-if (empty($_ENV['DB_HOST'])) {
-    die('DB_HOST not set. Check .env file location and syntax.');
+// Load .env locally only
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
 }
 
-$host = $_ENV['DB_HOST'];
-$dbname = $_ENV['DB_NAME'];
-$user = $_ENV['DB_USER'];
-$pass = $_ENV['DB_PASS'];
-$port = $_ENV['DB_PORT'];
-
+$host   = $_ENV['DB_HOST']   ?? getenv('DB_HOST');
+$dbname = $_ENV['DB_NAME']   ?? getenv('DB_NAME');
+$user   = $_ENV['DB_USER']   ?? getenv('DB_USER');
+$pass   = $_ENV['DB_PASS']   ?? getenv('DB_PASS');
+$port   = $_ENV['DB_PORT']   ?? getenv('DB_PORT') ?: '3306';
 
 try {
     $pdo = new PDO(
@@ -45,21 +30,17 @@ try {
         $pass
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-
 } catch (PDOException $e) {
     die("❌ Connection failed: " . $e->getMessage());
 }
 
-
-//rETRIEVE rECORDS
-
-  $statement = $pdo->prepare('SELECT * FROM customers ORDER BY id');
-    $statement->execute();
-    $customers = $statement->fetchAll(PDO::FETCH_ASSOC);
+$statement = $pdo->prepare('SELECT * FROM customers ORDER BY id');
+$statement->execute();
+$customers = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
+<body>
 <table>
     <thead>
         <tr>
@@ -72,27 +53,17 @@ try {
     <tbody>
         <?php foreach ($customers as $customer): ?>
         <tr>
-            <td><?= $customer['id'] ?></td>
-            <td><?= $customer['name'] ?></td>
+            <td><?= htmlspecialchars($customer['id']) ?></td>
+            <td><?= htmlspecialchars($customer['name']) ?></td>
             <td>
-                <a href="mailto:<?= $customer['email'] ?>">
-                    <?= $customer['email'] ?>
+                <a href="mailto:<?= htmlspecialchars($customer['email']) ?>">
+                    <?= htmlspecialchars($customer['email']) ?>
                 </a>
             </td>
-            <td><?= $customer['created_at'] ?></td>
+            <td><?= htmlspecialchars($customer['created_at']) ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
-
-
-
-
+</body>
 </html>
-
-
-
-
-
-
-
