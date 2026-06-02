@@ -1,10 +1,9 @@
 {
   "version": 2,
   "functions": {
-    "api/*.php": { "runtime": "vercel-php@0.7.2" }
+    "api/customers.php": { "runtime": "vercel-php@0.7.2" }
   },
   "routes": [
-    { "src": "/", "dest": "/api/customers.php" },
-    { "src": "/api/(.*)", "dest": "/api/$1.php" }
+    { "src": "/", "dest": "/api/customers.php" }
   ]
 }
